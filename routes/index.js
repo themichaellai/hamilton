@@ -14,10 +14,11 @@ router.post('/smstest', function(req, res) {
   });
 });
 
-router.post('/sms', twilio.webhook(config.TWILIO_AUTH), function(req, res) {
+router.post('/sms', twilio.webhook(config.TWILIO.AUTH), function(req, res) {
   var resMessage = parser(req.body, function(message) {
     var twiml = new twilio.TwimlResponse();
     twiml.message(message);
+    console.log('sending: "' + message + '" to ' + req.body.From);
     res.send(twiml)
   });
 });

@@ -1,4 +1,8 @@
+var config = require('../config');
+var _ = require('underscore');
 var Subscriber = require('../models/subscriber');
+var twilio = require('twilio')(config.TWILIO.SID, config.TWILIO.AUTH);
+var async = require('async');
 
 var factory = function(mongoose) {
   return function(body, cb) {
@@ -22,9 +26,21 @@ var factory = function(mongoose) {
       Subscriber.find({
         resource: 'food:' + restaurantName,
       }, function(err, foodPeople) {
-        // TODO: send texts to foodPeople
-        console.log('notifying', foodPeople);
-        return cb('you are in the queue for ' + restaurantName + ' at position ' + 1 + '!');
+        var texts = _.map(foodPeople, function(person) {
+          return function(cb) {
+            twilio.sms.messages.create({
+              to: person.phoneNumber,
+              from: config.TWILIO.NUMBER,
+              body: 'Received order: ' + order,
+            }, function(err, text) {
+              if (err) return cb(err);
+              return cb(null, text);
+            });
+          };
+        });
+        async.parallel(texts, function(err) {
+          return cb('you are in the queue for ' + restaurantName + '!');
+        });
       });
     }
   };
