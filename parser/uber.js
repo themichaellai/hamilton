@@ -1,3 +1,4 @@
+var uberLogin = require('../scripts/uber_login.js');
 var factory = function(mongoose) {
   return function(body, cb) {
     var message = body.Body;
@@ -5,7 +6,17 @@ var factory = function(mongoose) {
     if (parts.length > 0 && parts[0] !== 'uber') {
       return cb();
     }
-    return cb('your uber is on the way!');
+
+    if (parts[1] === 'auth') {
+      var username = parts[2];
+      var password = parts[3];
+      var phone = body.From;
+      uberLogin(username, password, phone, function() {
+        return cb('you are authed!');
+      });
+    } else {
+      return cb('your uber is on the way!');
+    }
   };
 };
 
