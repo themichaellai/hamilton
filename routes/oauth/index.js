@@ -17,11 +17,11 @@ router.get('/uber/return', function(req, res, next) {
   };
   request.post('https://login.uber.com/oauth/token', data, function(err, reqRes, body) {
     var body = JSON.parse(body);
-    var auth = new Auth({
-      phoneNumber: req.query.state,
-      access_token: body.access_token,
-    });
-    auth.save(function(err) {
+    Auth.update({phoneNumber: req.query.state}, {
+      phoneNumber: decodeURIComponent(req.query.state),
+      accessToken: body.access_token,
+    },
+    {upsert: true}, function(err) {
       return res.sendStatus(200);
     });
   });

@@ -4,7 +4,7 @@ var config = require('../config');
 
 var login = function(username, password, phoneNumber, cb) {
   nightmare
-    .goto('https://login.uber.com/oauth/authorize?client_id=' + config.UBER.CLIENT_ID + '&response_type=code&state=' + phoneNumber)
+    .goto('https://login.uber.com/oauth/authorize?client_id=' + config.UBER.CLIENT_ID + '&response_type=code&state=' + encodeURIComponent(phoneNumber) + '&scope=request')
     .type('input#email', username)
     .type('input#password', password)
     .click('button')

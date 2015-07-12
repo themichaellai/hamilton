@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var Auth = mongoose.model('Auth', mongoose.Schema({
   phoneNumber: String,
-  access_token: String,
+  accessToken: String,
 }));
 
 module.exports = Auth;
