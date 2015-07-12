@@ -1,5 +1,8 @@
 var async = require('async');
 var _ = require('underscore');
+var redis = require('redis');
+var redisClient = redis.createClient({});
+
 var medical = require('./medical');
 var uber = require('./uber');
 var food = require('./food');
@@ -11,7 +14,7 @@ var parser = function(message, parserCb) {
     food,
   ], function(method) {
     return function(cb) {
-      method(message, function(resText) {
+      method(redisClient)(message, function(resText) {
         if (_.isUndefined(resText)) {
           return cb();
         } else {

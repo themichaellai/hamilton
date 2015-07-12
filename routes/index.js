@@ -9,17 +9,36 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/smstest', function(req, res) {
-  var command = req.body.command;
-  parser(command, function(message) {
+  parser(req.body, function(message) {
     return res.send(message);
   });
 });
 
 router.post('/sms', twilio.webhook(config.TWILIO_AUTH), function(req, res) {
-  var resMessage = parser(req.body.Body);
-  var twiml = new twilio.TwimlResponse();
-  twiml.message('your message was: ' + req.body.Body);
-  res.send(twiml)
+  var resMessage = parser(req.body, function(message) {
+    var twiml = new twilio.TwimlResponse();
+    twiml.message(message);
+    res.send(twiml)
+  });
 });
 
 module.exports = router;
+
+//{ ToCountry: 'US',
+//  ToState: 'NC',
+//  SmsMessageSid: 'SMf6a35bf42ad156861d2697f41770678f',
+//  NumMedia: '0',
+//  ToCity: 'SNOW CAMP',
+//  FromZip: '27614',
+//  SmsSid: 'SMf6a35bf42ad156861d2697f41770678f',
+//  FromState: 'NC',
+//  SmsStatus: 'received',
+//  FromCity: 'CHAPEL HILL',
+//  Body: 'Hung dress link ft',
+//  FromCountry: 'US',
+//  To: '',
+//  ToZip: '27258',
+//  MessageSid: 'SMf6a35bf42ad156861d2697f41770678f',
+//  AccountSid: 'AC4c9f0c7869afbfd14230a0d58cc5e72b',
+//  From: '',
+//  ApiVersion: '2010-04-01' }
