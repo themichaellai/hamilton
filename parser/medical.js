@@ -1,4 +1,4 @@
-var factory = function(redis) {
+var factory = function(mongoose) {
   return function(body, cb) {
     var message = body.Body;
     var parts = message.split(' ');
